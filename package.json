@@ -1,5 +1,5 @@
 {
-  "name": "@windaka/erp-cli",
+  "name": "@windaka-erp/erp-cli",
   "version": "0.1.0",
   "description": "ERP CLI - command-line tool for Windaka ERP system",
   "bin": {
