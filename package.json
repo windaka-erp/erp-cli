@@ -1,6 +1,6 @@
 {
   "name": "@windaka-erp/erp-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "ERP CLI - command-line tool for Windaka ERP system",
   "bin": {
     "erp-cli": "scripts/run.js"
