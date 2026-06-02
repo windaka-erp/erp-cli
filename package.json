@@ -1,0 +1,40 @@
+{
+  "name": "@windaka/erp-cli",
+  "version": "0.1.0",
+  "description": "ERP CLI - command-line tool for Windaka ERP system",
+  "bin": {
+    "erp-cli": "scripts/run.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install.js"
+  },
+  "files": [
+    "scripts/",
+    "bin/",
+    "README.md"
+  ],
+  "keywords": [
+    "erp",
+    "cli",
+    "windaka",
+    "property-management"
+  ],
+  "author": "Windaka",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/windaka-erp/erp-cli.git"
+  },
+  "os": [
+    "win32",
+    "darwin",
+    "linux"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
+}
