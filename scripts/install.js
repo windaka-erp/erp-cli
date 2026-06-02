@@ -36,6 +36,49 @@ function getDownloadURL(info) {
   return `https://github.com/${GITHUB_REPO}/releases/download/v${VERSION}/${filename}`;
 }
 
+// ── 获取已安装二进制的版本号 ──
+function getInstalledVersion(binaryPath) {
+  try {
+    const output = execSync(`"${binaryPath}" --version`, {
+      encoding: "utf8",
+      timeout: 5000,
+    });
+    // 输出格式: "erp-cli version v0.2.0" 或 "erp-cli version 0.2.0"
+    const match = output.match(/version\s+v?(\S+)/i);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+}
+
+// ── 比较版本号 ──
+function isVersionOutdated(installed, expected) {
+  if (!installed) return true;
+  // 去掉 v 前缀统一比较
+  const a = installed.replace(/^v/, "");
+  const b = expected.replace(/^v/, "");
+  return a !== b;
+}
+
+// ── 下载二进制 ──
+function downloadBinary(url, binaryPath) {
+  if (process.platform === "win32") {
+    execSync(
+      `powershell -Command "Invoke-WebRequest -Uri '${url}' -OutFile '${binaryPath}'"`,
+      { stdio: "inherit" }
+    );
+  } else {
+    execSync(`curl -L -o "${binaryPath}" "${url}"`, {
+      stdio: "inherit",
+    });
+  }
+
+  // 设置可执行权限（非 Windows）
+  if (process.platform !== "win32") {
+    fs.chmodSync(binaryPath, 0o755);
+  }
+}
+
 // ── 主流程 ──
 function install() {
   const pkgDir = path.join(__dirname, "..");
@@ -47,10 +90,17 @@ function install() {
   const info = getPlatformInfo();
   const binaryPath = path.join(binDir, `${BINARY_NAME}${info.ext}`);
 
-  // 1. 检查 bin/ 目录是否已有对应平台的二进制（npm pack 打包时带进来的）
+  // 1. 检查 bin/ 目录是否已有对应平台的二进制
   if (fs.existsSync(binaryPath)) {
-    console.log(`Found bundled binary: ${binaryPath}`);
-    return;
+    const installedVer = getInstalledVersion(binaryPath);
+    if (!isVersionOutdated(installedVer, VERSION)) {
+      console.log(`Found bundled binary: ${binaryPath} (v${installedVer})`);
+      return;
+    }
+    // 版本不一致，需要更新
+    console.log(
+      `Binary version mismatch: installed v${installedVer}, expected v${VERSION}. Updating...`
+    );
   }
 
   // 2. 检查项目根目录是否有本地编译产物（开发模式）
@@ -68,24 +118,7 @@ function install() {
   console.log(`  URL: ${url}`);
 
   try {
-    if (process.platform === "win32") {
-      // Windows: 使用 PowerShell 下载
-      execSync(
-        `powershell -Command "Invoke-WebRequest -Uri '${url}' -OutFile '${binaryPath}'"`,
-        { stdio: "inherit" }
-      );
-    } else {
-      // macOS/Linux: 使用 curl
-      execSync(`curl -L -o "${binaryPath}" "${url}"`, {
-        stdio: "inherit",
-      });
-    }
-
-    // 设置可执行权限（非 Windows）
-    if (process.platform !== "win32") {
-      fs.chmodSync(binaryPath, 0o755);
-    }
-
+    downloadBinary(url, binaryPath);
     console.log(`Successfully installed ${BINARY_NAME} v${VERSION}`);
   } catch (err) {
     console.error(`Download failed: ${err.message}`);
