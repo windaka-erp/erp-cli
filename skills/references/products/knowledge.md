@@ -151,7 +151,7 @@ erp-cli --as me knowledge +search --question "消防巡检" --similarity-thresho
 
 ### 错误处理
 
-1. **RAGFlow 未配置（缺 URL / API Key / Dataset IDs）**：**主动帮用户配置**，执行 `erp-cli --as <身份> config ragflow`，这是交互式引导命令，会依次让用户输入 URL、API Key，并自动查询列出可用知识库让用户选择。不要让用户手动去改配置文件
+1. **RAGFlow 未配置（缺 URL / API Key / Dataset IDs）**：**主动帮用户配置**，执行 `erp-cli --as <身份> config ragflow`，让命令交互式引导用户输入 URL、API Key，并自动列出知识库让用户选择。**不要自行填入配置值，必须让用户通过交互式命令自己提供**
 2. **RAGFlow 不可达**：AI 降级为通用知识回答，告知用户"知识库服务暂时不可用"
 3. **ERP 未登录不影响知识库**：`+search` 不依赖 ERP token
 
@@ -169,9 +169,9 @@ erp-cli --as me knowledge +search --question "消防巡检" --similarity-thresho
 
 ## 配置
 
-### config ragflow — 交互式配置知识库（推荐）
+### config ragflow — 交互式配置知识库
 
-一条命令完成 RAGFlow 所有配置，**AI 发现知识库未配置时应主动执行此命令引导用户**：
+一条命令完成 RAGFlow 所有配置，**AI 发现知识库未配置时应执行此命令让用户交互式填写**：
 
 ```bash
 erp-cli --as me config ragflow
@@ -180,7 +180,7 @@ erp-cli --as me config ragflow
 交互流程：
 ```
 RAGFlow URL [http://223.80.101.21:39054]: ← 回车用默认，或输入新地址
-RAGFlow API Key: ragflow-VhNmRiYm...     ← 输入 API Key
+RAGFlow API Key: ragflow-VhNmRiYm...     ← 用户输入 API Key
 Querying available datasets...
 
 Available datasets:
@@ -197,20 +197,14 @@ RAGFlow configuration saved.
 Verify with: erp-cli --as me knowledge +check
 ```
 
-非交互模式（AI Agent 可直接传参）：
-
-```bash
-erp-cli --as me config ragflow --base-url http://223.80.101.21:39054 --api-key ragflow-xxx --dataset-ids id1,id2
-```
-
 ### 手动逐项配置
 
-也可用 `config set` 逐项设置：
+如需逐项设置，用 `config set`：
 
 ```bash
 erp-cli --as me config set ragflow.baseUrl http://223.80.101.21:39054
 erp-cli --as me config set ragflow.apiKey ragflow-xxxxxxxx
-erp-cli --as me config set ragflow.defaultDatasetIds '["cd018c845b4011f185a93582a7bd31ea"]'
+erp-cli --as me config set ragflow.defaultDatasetIds '["id1","id2"]'
 ```
 
 ### 配置文件

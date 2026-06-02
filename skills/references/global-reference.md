@@ -26,20 +26,14 @@ erp-cli --as me config show
 
 ### 修改配置
 
-**RAGFlow 知识库配置（推荐交互式）：**
+**RAGFlow 知识库配置：**
 
 ```bash
-# 一条命令交互式配置 URL + API Key + 知识库 ID
+# 交互式配置 URL + API Key + 知识库 ID（AI 应使用此方式，让用户自己填写）
 erp-cli --as me config ragflow
 ```
 
-命令会依次提示输入 URL、API Key，并自动查询列出可用知识库让用户选择。AI 发现知识库未配置时应主动执行此命令。
-
-非交互模式：
-
-```bash
-erp-cli --as me config ragflow --base-url http://223.80.101.21:39054 --api-key ragflow-xxx --dataset-ids id1,id2
-```
+命令会依次提示输入 URL、API Key，并自动查询列出可用知识库让用户选择。
 
 **逐项手动配置：**
 
