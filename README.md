@@ -44,7 +44,7 @@ erp-cli --as me workorder +list
 
 ### AI Agent
 
-> 以下步骤面向 AI Agent，部分步骤需要用户在浏览器中配合完成。
+> 以下步骤面向 AI Agent，部分步骤需要用户在浏览器中配合完成。详细步骤见 [INSTALL.md](./INSTALL.md)。
 
 **第 1 步 — 安装**
 
