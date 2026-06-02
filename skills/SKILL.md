@@ -6,11 +6,27 @@ metadata:
   requires:
     bins: ["erp-cli"]
   cliHelp: "erp-cli --help"
+  install: |
+    npm install -g @windaka-erp/erp-cli
 ---
 
 # 物达通 ERP 全产品 Skill
 
 通过 `erp-cli` 命令管理物达通 ERP 系统能力。
+
+## 安装
+
+如果环境中没有 `erp-cli`，执行以下命令安装：
+
+```bash
+npm install -g @windaka-erp/erp-cli
+```
+
+安装完成后验证：
+
+```bash
+erp-cli --help
+```
 
 **你（AI Agent）是执行者：用户用自然语言描述需求，由你决定并执行对应的 CLI 命令。不要让用户自己输入命令。**
 
