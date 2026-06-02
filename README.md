@@ -44,9 +44,7 @@ erp-cli --as me workorder +list
 
 ### AI Agent
 
-> 以下步骤面向 AI Agent，部分步骤需要用户在浏览器中配合完成。详细步骤见 [INSTALL.md](./INSTALL.md)。
-
-**第 1 步 — 安装**
+> 以下步骤面向 AI Agent。详细步骤见 [INSTALL.md](./INSTALL.md)。
 
 ```bash
 # 安装 CLI
@@ -54,28 +52,12 @@ npm install -g @windaka-erp/erp-cli
 
 # 安装 Skills（必需）
 npx skills add windaka-erp/erp-cli -y -g
+
+# 验证
+erp-cli --help
 ```
 
-**第 2 步 — 配置**
-
-```bash
-erp-cli --as <id> config init
-```
-
-**第 3 步 — 登录**
-
-> 后台运行，提取授权链接发给用户在浏览器中完成。
-
-```bash
-erp-cli --as <id> auth login-start
-erp-cli --as <id> auth login-wait
-```
-
-**第 4 步 — 验证**
-
-```bash
-erp-cli --as <id> auth status
-```
+安装完成即可使用。知识库检索无需登录；需要登录的操作（如工单查询）会在调用时自动引导。
 
 ## 命令
 

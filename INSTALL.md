@@ -1,6 +1,6 @@
 # 物达通 ERP CLI 安装指南
 
-以下步骤面向 AI Agent，部分步骤需要用户在浏览器中配合完成。
+以下步骤面向 AI Agent。
 
 ## 环境要求
 
@@ -18,28 +18,10 @@ npm install -g @windaka-erp/erp-cli
 npx skills add windaka-erp/erp-cli -y -g
 ```
 
-## 第 2 步 配置
+## 第 2 步 验证
 
 ```shell
-erp-cli --as me config init
+erp-cli --help
 ```
 
-## 第 3 步 登录
-
-Agent 运行以下命令，提取授权链接发给用户在浏览器中完成。
-
-```shell
-# 启动登录，获取授权链接
-erp-cli --as me auth login-start
-
-# 等待用户完成授权
-erp-cli --as me auth login-wait
-```
-
-## 第 4 步 验证
-
-```shell
-erp-cli --as me auth status
-```
-
-更多命令和能力指南，可参考 [skills/SKILL.md](./skills/SKILL.md)。
+安装完成。使用时通过 Skill 读取 [skills/SKILL.md](./skills/SKILL.md) 获取命令指南，登录会在需要时自动引导。
