@@ -129,6 +129,21 @@ async function silentAutoUpdate() {
     // 已安装版本比 package.json 新？跳过
     if (installedVer && installedVer > VERSION.replace(/^v/, "")) return;
 
+    // 检查上次更新时间，每天最多检查一次
+    const updateMarker = path.join(
+      require("os").homedir(),
+      ".erp-cli",
+      ".last-update-check"
+    );
+    try {
+      const lastCheck = parseInt(fs.readFileSync(updateMarker, "utf8"), 10);
+      const ONE_DAY = 24 * 60 * 60 * 1000;
+      if (Date.now() - lastCheck < ONE_DAY) return;
+    } catch {
+      // 文件不存在或读取失败，继续检查
+    }
+    if (installedVer && installedVer > VERSION.replace(/^v/, "")) return;
+
     // 需要更新：查询 GitHub Release 获取最新版本号
     const release = await fetchJSON(
       `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`
@@ -157,8 +172,23 @@ async function silentAutoUpdate() {
 
     // 替换旧二进制
     fs.renameSync(tmpPath, binaryPath);
+
+    // 写入本次检查时间
+    try {
+      const markerDir = path.join(require("os").homedir(), ".erp-cli");
+      if (!fs.existsSync(markerDir)) fs.mkdirSync(markerDir, { recursive: true });
+      fs.writeFileSync(markerDir + "/.last-update-check", String(Date.now()));
+    } catch {
+      // 写入失败不影响
+    }
   } catch {
     // 静默失败，不影响正常使用
+    // 即使失败也写入检查时间，避免频繁重试
+    try {
+      const markerDir = path.join(require("os").homedir(), ".erp-cli");
+      if (!fs.existsSync(markerDir)) fs.mkdirSync(markerDir, { recursive: true });
+      fs.writeFileSync(markerDir + "/.last-update-check", String(Date.now()));
+    } catch {}
   }
 }
 
