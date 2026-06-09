@@ -6,6 +6,7 @@ const fs = require("fs");
 const BINARY_NAME = "erp-cli";
 const VERSION = require("../package.json").version;
 const GITHUB_REPO = "windaka-erp/erp-cli";
+const GITEE_REPO = "xing-wenkai/erp-cli";
 
 // ── 平台映射 ──
 function getPlatformInfo() {
@@ -30,10 +31,13 @@ function getPlatformInfo() {
   return info;
 }
 
-// ── 下载地址 ──
-function getDownloadURL(info) {
+// ── 下载地址（GitHub 优先，Gitee 回退）──
+function getDownloadURLs(info) {
   const filename = `${BINARY_NAME}-${info.target}${info.ext}`;
-  return `https://github.com/${GITHUB_REPO}/releases/download/v${VERSION}/${filename}`;
+  return [
+    `https://github.com/${GITHUB_REPO}/releases/download/v${VERSION}/${filename}`,
+    `https://gitee.com/${GITEE_REPO}/releases/download/v${VERSION}/${filename}`,
+  ];
 }
 
 // ── 获取已安装二进制的版本号 ──
@@ -112,16 +116,25 @@ function install() {
     return;
   }
 
-  // 3. 从 GitHub Releases 下载
-  const url = getDownloadURL(info);
+  // 3. 从 GitHub Releases 下载，失败回退 Gitee
+  const urls = getDownloadURLs(info);
   console.log(`Downloading ${BINARY_NAME} v${VERSION} for ${info.target}...`);
-  console.log(`  URL: ${url}`);
 
-  try {
-    downloadBinary(url, binaryPath);
-    console.log(`Successfully installed ${BINARY_NAME} v${VERSION}`);
-  } catch (err) {
-    console.error(`Download failed: ${err.message}`);
+  let downloaded = false;
+  for (const url of urls) {
+    console.log(`  Trying: ${url}`);
+    try {
+      downloadBinary(url, binaryPath);
+      downloaded = true;
+      console.log(`Successfully installed ${BINARY_NAME} v${VERSION}`);
+      break;
+    } catch (err) {
+      console.warn(`  Failed: ${err.message}`);
+    }
+  }
+
+  if (!downloaded) {
+    console.error(`All download sources failed.`);
     console.error(`You can build from source:`);
     console.error(`  git clone https://github.com/${GITHUB_REPO}.git`);
     console.error(`  cd erp-cli && go build -o ${BINARY_NAME} .`);

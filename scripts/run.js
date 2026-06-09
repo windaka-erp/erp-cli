@@ -8,6 +8,7 @@ const http = require("http");
 const BINARY_NAME = "erp-cli";
 const VERSION = require("../package.json").version;
 const GITHUB_REPO = "windaka-erp/erp-cli";
+const GITEE_REPO = "xing-wenkai/erp-cli";
 
 function getBinaryPath() {
   const binDir = path.join(__dirname, "..", "bin");
@@ -144,10 +145,18 @@ async function silentAutoUpdate() {
     }
     if (installedVer && installedVer > VERSION.replace(/^v/, "")) return;
 
-    // 需要更新：查询 GitHub Release 获取最新版本号
-    const release = await fetchJSON(
-      `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`
-    );
+    // 需要更新：查询 Release 获取最新版本号（GitHub 优先，Gitee 回退）
+    let release;
+    try {
+      release = await fetchJSON(
+        `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`
+      );
+    } catch {
+      // GitHub 不通，回退 Gitee API
+      release = await fetchJSON(
+        `https://gitee.com/api/v5/repos/${GITEE_REPO}/releases/latest`
+      );
+    }
 
     const latestTag = release.tag_name; // e.g. "v0.3.0"
     const latestVer = latestTag.replace(/^v/, "");
